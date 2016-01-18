@@ -1,0 +1,93 @@
+"""
+Register an application with the Github API here https://github.com/settings/applications. 
+Access the API to get information on your instructors repositories (hint: this is the url you want "https://api.github.com/users/jtleek/repos"). 
+Use this data to find the time that the datasharing repo was created. What time was it created?
+""""
+library(httr)
+library(httpuv)
+library(jsonlite)
+1. Find OAuth settings for github:
+#    http://developer.github.com/v3/oauth/
+oauth_endpoints("github")
+2.To make your own application, register at at
+#    https://github.com/settings/applications. Use any URL for the homepage URL
+#    (http://github.com is fine) and  http://localhost:1410 as the callback ur
+#    Replace your key and secret below.
+ myapp <- oauth_app("github",key="xxxxxxxxxxxxxxx",secret="aaeexxxxxxxxxxxxxd5ec5")
+3. Get OAuth credentials
+ git_token <- oauth2.0_token(oauth_endpoints("github"),myapp)
+ # 4. Use API
+ req <- GET("https://api.github.com/users/jtleek/repos",config(token=git_token))
+ stop_for_status(req)
+  output <- content(req)
+ # 5. convert to json format
+ 
+> json1 <- jsonlite::fromJSON(toJSON(output))
+> json1[json1$name== "datasharing",]["created_at"]
+Result:
+ created_at
+8 2013-11-07T13:25:07Z
+or 
+> json1[8,]["created_at"]
+
+#Question 2
+```{r}
+url = "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06pid.csv"
+download.file(url,destfile="/Users/Mrcus/Documents/Programming/Rprogramming/Rworkdir/GANDCdata/acs.csv",method="curl")
+or 
+f <- file.path(getwd(),acs.cv)
+download.file(url,f)
+
+library(data.table)
+acs <- fread(f)
+library(RMySQL)
+library(sqldf)
+query1 <- sqldf("select pwgtp1 from acs where AGEP < 50")
+```
+# error:Failed to connect to database: Error: Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)
+# to troubleshoot above error, below command for running SQLite while running 
+```{r}
+options(sqldf.driver = "SQLite")
+```
+#options(gsubfn.engine = "R") for problems with tck/tl
+```{r}
+x <- sqldf("select pwgtp1 from acs where AGEP < 50")
+head(x)
+```
+
+#Question4
+""""
+How many characters are in the 10th, 20th, 30th and 100th lines of HTML from this page:
+http://biostat.jhsph.edu/~jleek/contact.html
+(Hint: the nchar() function in R may be helpful)
+"""
+```{r}
+> con <- url("http://biostat.jhsph.edu/~jleek/contact.html")
+> html <- readLines(con)
+> close(con)
+> output <- c(nchar(html[10]),nchar(html[20]),nchar(html[30]),nchar(html[100])) 
+> output
+```
+
+# Question 5
+""""
+Read this data set into R and report the sum of the numbers in the fourth of the nine columns.
+https://d396qusza40orc.cloudfront.net/getdata%2Fwksst8110.for
+Original source of the data: http://www.cpc.ncep.noaa.gov/data/indices/wksst8110.for
+(Hint this is a fixed width file format)
+""""
+#Reading an fixed width file
+```{r}
+x <- read.fwf(f,skip = 4,widths=c((12, 7, 4, 9, 4, 9, 4, 9, 4))
+head(x)
+```
+#summing up the fourth column
+```{r}
+> sum(x$V4)
+[1] 32426.7
+```
+
+
+
+ 
+ 
